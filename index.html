@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>my design brief</title>
+    <meta name="description" content="A minimalist generator for realistic product design briefs." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="inner">
+        <a class="brand" href="index.html" aria-label="my case study home">
+          <img class="brand-icon" alt="" src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/solid/paper-airplane.svg" />
+          <span class="brand-name">my design brief</span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="about.html">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="container">
+      <header class="hero">
+        <h1>Generate your next design brief.</h1>
+        <p class="subtitle">Generate topic ideas to spark your creativity</p>
+      </header>
+
+      <section class="controls" aria-labelledby="controls-heading">
+        <h2 id="controls-heading" class="sr-only">Brief options</h2>
+        <div class="field">
+          <label for="industry">Industry</label>
+          <div class="select-wrap">
+            <select id="industry" name="industry" required>
+              <option>Fintech</option>
+              <option>Health</option>
+              <option>Education</option>
+              <option>Travel</option>
+              <option>Gaming</option>
+              <option>Social</option>
+              <option>Productivity</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="type">Type</label>
+          <div class="select-wrap">
+            <select id="type" name="type" required>
+              <option>complete application</option>
+              <option>some UI</option>
+              <option>prototype</option>
+              <option>wireframes</option>
+              <option>user flows</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="generate" class="cta" aria-live="polite">Generate Brief</button>
+      </section>
+
+      <section id="result" class="result hidden" aria-live="polite" aria-atomic="true">
+        <div class="card">
+          <h3 class="card-title">Your brief</h3>
+          <p id="brief-text" class="brief"></p>
+          <div class="twist-row">
+            <span class="icon twist-icon" aria-hidden="true"></span>
+            <p id="twist-text" class="twist"></p>
+          </div>
+          <div class="actions">
+            <button id="again" class="ghost">
+              <img class="icon again-icon" aria-hidden="true" alt="" src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/arrow-path.svg" />
+              Generate another
+            </button>
+            <button id="copy" class="ghost" aria-label="Copy brief to clipboard">
+              <img class="icon copy-icon" aria-hidden="true" alt="" src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/clipboard-document.svg" />
+              <span class="label-text">Copy brief</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footnote" aria-label="About">
+        <p>©2025 my case study - built with Cursor</p>
+      </footer>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+  </html>
+
+

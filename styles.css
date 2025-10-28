@@ -1,0 +1,410 @@
+:root {
+  --bg: #f9faf3; /* light, fresh base (base-100) */
+  --text: #1a1c14; /* dark near-black (base-content) */
+  --subtle: #5e614d; /* soft muted color for body text */
+  --muted: #8c9172; /* lighter secondary/meta text */
+  --card: #ffffff; /* surface (base-200) */
+  --shadow: 0 6px 24px rgba(26, 28, 20, 0.08); /* gentle natural shadow */
+  --accent: #8fd17a; /* lemonade green primary */
+  --twist-bg: #f4fbe8; /* light lemonade background tint */
+  --twist-fg: #4e7c3a; /* rich green accent for icons/text */
+  --header-h: 64px;
+  --footer-h: 48px;
+  --button-radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  color: var(--text);
+  background: radial-gradient(1000px 700px at 50% -10%, #ffffff 0%, var(--bg) 60%);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden; /* disable page scroll */
+}
+
+/* Fixed site header */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.site-header .inner {
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+  padding: 0 24px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7; /* subtle */
+}
+
+.brand-name {
+  font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.site-nav a {
+  color: var(--subtle);
+  text-decoration: none;
+  font-size: 14px;
+}
+.site-nav a:hover { color: var(--text); }
+
+.container {
+  max-width: 640px;
+  margin: var(--header-h) auto 0; /* below fixed header */
+  padding: 0 24px;
+  height: calc(100vh - var(--header-h) - var(--footer-h));
+  overflow: auto; /* allow content to scroll internally if needed */
+}
+
+.hero {
+  text-align: left;
+  margin: 36px 0 36px 0;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-size: clamp(28px, 4vw, 40px);
+}
+
+h1, h2, h3, .card-title {
+  font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+}
+
+.subtitle {
+  margin: 0 auto;
+  color: var(--subtle);
+}
+
+.controls {
+  display: grid;
+  gap: 16px;
+  margin: 32px auto 28px;
+}
+
+.field label {
+  display: block;
+  margin: 0 0 6px;
+  color: var(--subtle);
+  font-size: 14px;
+}
+
+.select-wrap {
+  position: relative;
+  background: var(--card);
+  border-radius: 12px;
+}
+
+/* native select arrow removed; custom dropdown renders its own */
+.select-wrap::after { display: none; }
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  padding: 14px 40px 14px 14px;
+  background: transparent;
+  color: var(--text);
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+select:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent);
+  border-radius: 12px;
+}
+
+.cta {
+  display: inline-block;
+  margin: 4px auto 0;
+  justify-self: center;
+  padding: 14px 20px;
+  color: var(--text);
+  background: var(--accent);
+  border: none;
+  border-radius: var(--button-radius);
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.cta:hover { transform: translateY(-1px); }
+.cta:active { transform: translateY(0); }
+.cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+.result.hidden { display: none; }
+
+.card {
+  margin-top: 24px;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 22px 20px;
+  box-shadow: var(--shadow);
+}
+
+.card-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.brief {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.twist-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--twist-fg);
+  background: var(--twist-bg);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+/* Ensure inner text doesn't collapse the row padding */
+.twist {
+  margin: 0; /* remove default p margins so row padding is respected */
+}
+
+/* Always render a visible label before the small twist */
+.twist::before {
+  content: 'Twist: ';
+  font-weight: 400;
+}
+
+.twist-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background-color: currentColor; /* color inherits from .twist-row */
+  -webkit-mask: url('https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/sparkles.svg') no-repeat center / contain;
+  mask: url('https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/sparkles.svg') no-repeat center / contain;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ghost {
+  background: rgba(0,0,0,0.05);
+  color: var(--text);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background 140ms ease, transform 120ms ease;
+}
+.ghost:hover { background: rgba(0,0,0,0.08); transform: translateY(-1px); }
+.ghost:active { transform: translateY(0); }
+.ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.copy-icon { width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px; }
+.again-icon { width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px; }
+
+.footnote {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--footer-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--muted);
+  padding: 0 16px;
+  font-size: 13px;
+}
+
+/* About page */
+.about {
+  display: grid;
+  gap: 16px;
+}
+
+.about-profile {
+  display: flex;
+  flex-direction: column; /* stack vertically */
+  align-items: flex-start;
+  text-align: left;
+  gap: 12px;
+  margin-top: 36px;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 420px) {
+  .brief { font-size: 16px; }
+  .actions { flex-direction: column; }
+}
+
+/* micro-interaction for missing required field */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+.shake { animation: shake 300ms ease; }
+
+
+/*
+  Custom dropdown (progressive enhancement for the native select)
+  Minimal, unobtrusive styling with focus states
+*/
+.visually-hidden-select {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  background: var(--card);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+}
+
+.dropdown-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.dropdown-button .value {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 20px;
+}
+
+.dropdown-button .chevron {
+  margin-left: auto;
+  color: var(--muted);
+}
+
+.dropdown-list {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 6px;
+  max-height: 280px;
+  overflow: auto;
+  list-style: none;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.dropdown-item[aria-selected="true"] { background: rgba(0,0,0,0.06); }
+.dropdown-item:hover { background: rgba(0,0,0,0.05); }
+.dropdown-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.dropdown-item .icon {
+  width: 18px;
+  height: 18px;
+  color: currentColor;
+  display: inline-block;
+  flex: 0 0 18px;
+}
+
+/* Ensure icon in the button matches dropdown item size */
+.dropdown-button .icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  flex: 0 0 18px;
+}
+
+.dropdown .sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
