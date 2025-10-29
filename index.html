@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
   </head>
   <body>
     <header class="site-header" role="banner">
@@ -26,7 +27,6 @@
     <main class="container">
       <header class="hero">
         <h1>Generate your next design brief.</h1>
-        <p class="subtitle">Generate topic ideas to spark your creativity</p>
       </header>
 
       <section class="controls" aria-labelledby="controls-heading">
@@ -47,17 +47,34 @@
         </div>
 
         <div class="field">
-          <label for="type">Type</label>
+          <label for="target">Target generation</label>
           <div class="select-wrap">
-            <select id="type" name="type" required>
-              <option>complete application</option>
-              <option>some UI</option>
-              <option>prototype</option>
-              <option>wireframes</option>
-              <option>user flows</option>
+            <select id="target" name="target" required>
+              <option value="Gen Z">Gen Z</option>
+              <option value="Gen Alpha">Gen Alpha</option>
+              <option value="Millennials">Millennials</option>
             </select>
           </div>
         </div>
+
+        <div class="field">
+          <label for="type">Type</label>
+          <div class="select-wrap">
+            <select id="type" name="type" required>
+              <option value="complete application">Full Application</option>
+              <option value="some UI">UI Screens</option>
+              <option value="prototype">Prototype</option>
+              <option value="wireframes">Wireframes</option>
+              <option value="user flows">User Flows</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="twist-toggle" style="display: inline-flex; align-items: center; gap: 10px; cursor: pointer;">
+          <input type="checkbox" id="twist-toggle" checked aria-describedby="twist-help"/>
+          <span>Include a twist</span>
+        </label>
+        <div id="twist-help" class="sr-only">If enabled, a design twist will be added to the brief.</div>
 
         <button id="generate" class="cta" aria-live="polite">Generate Brief</button>
       </section>
