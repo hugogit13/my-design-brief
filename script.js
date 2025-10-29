@@ -1,29 +1,65 @@
 const industryEl = document.getElementById('industry');
 const typeEl = document.getElementById('type');
 const generateBtn = document.getElementById('generate');
+const targetEl = document.getElementById('target');
 const resultSection = document.getElementById('result');
 const briefText = document.getElementById('brief-text');
 const twistText = document.getElementById('twist-text');
+const twistRow = document.querySelector('.twist-row');
+const twistToggleEl = document.getElementById('twist-toggle');
 const againBtn = document.getElementById('again');
 const copyBtn = document.getElementById('copy');
 
 const topicsByIndustry = {
-  Fintech: ['savings', 'micro-investing', 'peer-to-peer payments', 'budgeting', 'credit building', 'freelancer invoicing', 'split bills'],
-  Health: ['mental wellness', 'habit tracking', 'medication reminders', 'telehealth check-ins', 'sleep coaching', 'nutrition planning'],
-  Education: ['micro-learning', 'study groups', 'flashcards', 'language practice', 'peer mentoring', 'course discovery'],
-  Travel: ['itinerary planning', 'local discovery', 'flight deals', 'packing lists', 'offline maps', 'shared trips'],
-  Gaming: ['matchmaking', 'guild management', 'achievement tracking', 'esports brackets', 'user-generated levels'],
-  Social: ['interest communities', 'event discovery', 'local clubs', 'photo prompts', 'audio rooms', 'book swaps'],
-  Productivity: ['task batching', 'focus sessions', 'meeting notes', 'doc summarization', 'calendar harmony', 'template sharing']
+  Fintech: [
+    'savings', 'micro-investing', 'peer-to-peer payments', 'budgeting', 'credit building', 
+    'freelancer invoicing', 'split bills', 'AI wealth coaching', 'sustainable investing', 'subscription tracking'
+  ],
+  Health: [
+    'mental wellness', 'habit tracking', 'medication reminders', 'telehealth check-ins', 
+    'sleep coaching', 'nutrition planning', 'AI symptom journaling', 'mood-driven workouts', 'preventive nudges'
+  ],
+  Education: [
+    'micro-learning', 'study groups', 'flashcards', 'language practice', 'peer mentoring', 
+    'course discovery', 'AI tutoring', 'career path guidance', 'adaptive quizzes'
+  ],
+  Travel: [
+    'itinerary planning', 'local discovery', 'flight deals', 'packing lists', 'offline maps', 
+    'shared trips', 'AI travel companion', 'eco route suggestions', 'real-time translation help'
+  ],
+  Gaming: [
+    'matchmaking', 'guild management', 'achievement tracking', 'esports brackets', 
+    'user-generated levels', 'AI dungeon design', 'player behavior insights', 'cross-platform avatars'
+  ],
+  Social: [
+    'interest communities', 'event discovery', 'local clubs', 'photo prompts', 'audio rooms', 
+    'book swaps', 'AI-driven introductions', 'micro-social challenges', 'story-based identity building'
+  ],
+  Productivity: [
+    'task batching', 'focus sessions', 'meeting notes', 'doc summarization', 
+    'calendar harmony', 'template sharing', 'AI prioritization', 'contextual automation', 'ambient planning'
+  ],
+  Sustainability: [
+    'carbon footprint tracking', 'local reuse networks', 'eco-friendly swaps', 
+    'impact reporting', 'community cleanups', 'shared transport routes'
+  ],
+  Fashion: [
+    'outfit planning', 'wardrobe digitization', 'AI styling', 
+    'resale marketplaces', 'sustainable sourcing', 'creator collaborations'
+  ]
 };
 
 const audiences = [
   'students', 'remote teams', 'first-time parents', 'busy professionals', 'indie creators',
-  'travelers', 'new residents', 'community organizers', 'volunteers', 'small business owners'
+  'travelers', 'new residents', 'community organizers', 'volunteers', 'small business owners',
+  'digital nomads', 'retirees exploring tech', 'content creators', 'eco-conscious consumers',
+  'high school teachers', 'solo entrepreneurs', 'gamers in their 30s', 'health coaches',
+  'multilingual households', 'AI enthusiasts'
 ];
 
 const goals = [
-  'discover', 'plan', 'track', 'share', 'learn', 'improve', 'connect', 'collaborate', 'stay motivated'
+  'discover', 'plan', 'track', 'share', 'learn', 'improve', 'connect', 'collaborate', 'stay motivated',
+  'reflect', 'automate', 'personalize', 'co-create', 'explore', 'grow', 'decompress', 'organize', 'experiment', 'feel supported'
 ];
 
 const twists = [
@@ -36,7 +72,35 @@ const twists = [
   'Narrate key moments with subtle haptic feedback.',
   'No modals. Rethink flows to avoid them.',
   'Dark mode is the default; light mode is optional.',
-  'Include a whimsical empty state illustration.'
+  'Include a whimsical empty state illustration.',
+  'Every screen must have a tiny animation.',
+  'Design it to work perfectly on a smartwatch.',
+  'The onboarding happens without any text.',
+  'You must use a circular layout somewhere.',
+  'All images must be black and white.',
+  'Microcopy must sound like a friendly robot.',
+  'Each error state should make the user smile.',
+  'The interface should feel inspired by nature.',
+  'Design as if it’s used in a noisy environment.',
+  'Everything must fit in a single scroll view.',
+  'The UI should subtly change based on time of day.',
+  'You can’t use borders—rely on spacing and color only.',
+  'The product must work beautifully in low light.',
+  'Every button has to have a distinct shape.',
+  'All illustrations must be geometric.',
+  'Design for left-handed users first.',
+  'No icons—use text or shapes instead.',
+  'The experience should feel like a board game.',
+  'Users can only interact with voice and gestures.',
+  'Include one delightful hidden interaction (an Easter egg).',
+  'Your layout grid must be 5 columns wide.',
+  'The app should feel like a 90s OS.',
+  'Use only monochrome + one accent color.',
+  'Design for slow internet connections.',
+  'Make it usable with gloves on.',
+  'Every transition must have a purpose.',
+  'The app should react subtly to the user’s mood.',
+  'Design it so it can be printed on paper and still make sense.'
 ];
 
 // ----------------------------------------------
@@ -73,6 +137,7 @@ function seededPick(array, rnd) {
 // Tracks current parameter seed and a variant counter for "Generate another"
 let lastSeedBasis = '';
 let variantCounter = 0;
+let lastEffectiveSeed = '';
 
 // removed unused pick/sentenceCase utilities
 
@@ -248,21 +313,97 @@ const useCasesByIndustry = {
   ]
 };
 
-function generateBrief({ industry, type, seedOverride }) {
-  const seed = seedOverride || `${industry}|${type}`;
+// Topic-specific use cases to ensure coherence within each industry
+// When present, these override the broader industry list
+const useCasesByTopic = {
+  Social: {
+    'book swaps': [
+      'catalog and list books for swapping in under a minute',
+      'match with nearby readers for swaps automatically',
+      'track swap history and condition notes seamlessly'
+    ],
+    'photo prompts': [
+      'share a photo set with automatic captions',
+      'respond to daily prompts with quick multi-photo posts',
+      'auto-curate best shots from a burst to post faster'
+    ],
+    'event discovery': [
+      'create an event in under a minute',
+      'find nearby groups that match interests',
+      'RSVP and add to calendar in one tap'
+    ],
+    'interest communities': [
+      'find and join a relevant community in two taps',
+      'surface trending threads you can contribute to right now'
+    ],
+    'audio rooms': [
+      'start an audio room and invite friends in 15 seconds',
+      'clip and share highlights right after the room ends'
+    ],
+    'local clubs': [
+      'discover nearby clubs you can attend this week',
+      'apply to join a club with a short intro in one flow'
+    ]
+  },
+  Travel: {
+    'itinerary planning': [
+      'compare multi-city itineraries side by side',
+      'plan and manage itineraries collaboratively with friends'
+    ],
+    'flight deals': [
+      'find price drops for watched routes instantly',
+      'bundle flights and stays with transparent total cost'
+    ],
+    'offline maps': [
+      'navigate with offline maps and live reroutes',
+      'save places and access them offline while roaming'
+    ]
+  },
+  Fintech: {
+    'savings': [
+      'round-up purchases to grow savings daily',
+      'set weekly savings goals with smart nudges'
+    ],
+    'peer-to-peer payments': [
+      'transfer money to contacts in under 10 seconds',
+      'split and settle expenses with friends instantly'
+    ],
+    'budgeting': [
+      'auto-categorize expenses with 95% accuracy',
+      'set envelope budgets that adapt to spending patterns'
+    ]
+  }
+};
+
+// Generation-specific style guidance to steer the brief tone
+const generationStyle = {
+  'Gen Z': 'Design language: vibrant, colourful, social-first interactions.',
+  'Gen Alpha': 'Design language: playful, exploratory, safe-by-default.',
+  'Millennials': 'Design language: clean, practical, productivity-focused.'
+};
+
+function generateBrief({ industry, type, target, seedOverride }) {
+  const seed = seedOverride || `${industry}|${type}|${target || ''}`;
   const rnd = rngFromSeed(seed);
 
   const topic = seededPick(topicsByIndustry[industry] || ['discovery'], rnd);
   const modifier = topicModifier(industry, topic);
   const app = industryAppPhrase[industry] || `${industry.toLowerCase()} application`;
   const typePhrase = allowedTypes.includes(type) ? type : 'some UI';
-  const useCase = seededPick(useCasesByIndustry[industry] || ['deliver clear user value fast'], rnd);
+  // Prefer topic-specific use cases when available; fall back to industry list
+  const topicSpecific = (useCasesByTopic[industry] && useCasesByTopic[industry][topic]) || null;
+  const candidateUseCases = topicSpecific && topicSpecific.length
+    ? topicSpecific
+    : (useCasesByIndustry[industry] || []);
+  const useCase = seededPick(candidateUseCases.length ? candidateUseCases : ['deliver clear user value fast'], rnd);
 
   // E.g., "Create some UI for a cycling travel application. The main use case is as follows: book trips in less than 5 clicks."
   const modifierPrefix = modifier ? `${modifier} ` : '';
-  const first = `Create ${typePhrase} for a ${modifierPrefix}${app}.`;
+  const audienceSuffix = target ? ` for ${target}` : '';
+  const first = `Create ${typePhrase} for a ${modifierPrefix}${app}${audienceSuffix}.`;
   const second = `The main use case is as follows: ${useCase}.`;
-  return `${first} ${second}`;
+  const style = generationStyle[target] ? ` ${generationStyle[target]}` : '';
+  return `${first} ${second}${style}`;
 }
 
 function generateTwist(seedBasis) {
@@ -278,10 +419,12 @@ function setLoading(isLoading) {
 function handleGenerate(variant = false) {
   const industry = industryEl.value;
   const type = typeEl.value;
+  const target = targetEl ? targetEl.value : '';
+  const includeTwist = twistToggleEl ? !!twistToggleEl.checked : true;
 
-  if (!industry || !type) {
+  if (!industry || !type || !target) {
     // soft nudge
-    [industryEl, typeEl].forEach(el => {
+    [industryEl, typeEl, targetEl].forEach(el => {
       if (!el.value) {
         el.parentElement.classList.add('shake');
         setTimeout(() => el.parentElement.classList.remove('shake'), 400);
@@ -293,7 +436,7 @@ function handleGenerate(variant = false) {
   setLoading(true);
 
   // Simulate a tiny delay for anticipation/micro-interaction
-  const basis = `${industry}|${type}`;
+  const basis = `${industry}|${type}|${target}`;
   if (basis !== lastSeedBasis) {
     variantCounter = 0;
     lastSeedBasis = basis;
@@ -305,19 +448,30 @@ function handleGenerate(variant = false) {
   }
 
   const effectiveSeed = variantCounter ? `${basis}|v${variantCounter}` : basis;
+  lastEffectiveSeed = effectiveSeed;
 
   setTimeout(() => {
-    const brief = generateBrief({ industry, type, seedOverride: effectiveSeed });
-    const twist = generateTwist(effectiveSeed);
+    const brief = generateBrief({ industry, type, target, seedOverride: effectiveSeed });
+    const twist = includeTwist ? generateTwist(effectiveSeed) : '';
     briefText.textContent = brief;
     twistText.textContent = twist;
+    if (twistRow) {
+      if (includeTwist) {
+        twistRow.style.display = '';
+      } else {
+        twistRow.style.display = 'none';
+      }
+    }
     resultSection.classList.remove('hidden');
     setLoading(false);
   }, 420);
 }
 
 function handleCopy() {
-  const content = `Brief: ${briefText.textContent}\nTwist: ${twistText.textContent}`;
+  const includeTwist = twistToggleEl ? !!twistToggleEl.checked : true;
+  const content = includeTwist && twistText.textContent
+    ? `Brief: ${briefText.textContent}\nTwist: ${twistText.textContent}`
+    : `Brief: ${briefText.textContent}`;
   navigator.clipboard.writeText(content).then(() => {
     const label = copyBtn.querySelector('.label-text');
     if (label) {
@@ -368,6 +522,12 @@ const typeIcons = {
 
 // removed tone icons
 
+// Target generation icons
+const targetIcons = {
+  'Gen Z': hero('sparkles'),
+  'Gen Alpha': hero('beaker'),
+  'Millennials': hero('briefcase')
+};
 const chevronDown = '<svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
 
 function enhanceSelect(selectEl, iconMap) {
@@ -391,7 +551,7 @@ function enhanceSelect(selectEl, iconMap) {
 
   const valueSpan = document.createElement('span');
   valueSpan.className = 'value';
-  valueSpan.innerHTML = `${iconFor(selectEl, iconMap, selectEl.selectedOptions[0]?.textContent)}<span class="label">${selectEl.selectedOptions[0]?.textContent || selectEl.options[0]?.textContent || ''}</span>`;
+  valueSpan.innerHTML = `${iconFor(selectEl, iconMap, selectEl.value)}<span class="label">${selectEl.selectedOptions[0]?.textContent || selectEl.options[0]?.textContent || ''}</span>`;
 
   const chevron = document.createElement('span');
   chevron.innerHTML = chevronDown;
@@ -415,7 +575,7 @@ function enhanceSelect(selectEl, iconMap) {
     item.setAttribute('aria-selected', String(opt.selected));
     if (isDisabled) item.setAttribute('aria-disabled', 'true');
     item.tabIndex = isDisabled ? -1 : 0; // allow focus unless disabled
-    item.innerHTML = `${iconFor(selectEl, iconMap, opt.textContent)}<span class="label">${opt.textContent}</span>`;
+    item.innerHTML = `${iconFor(selectEl, iconMap, (opt.hasAttribute('value') ? opt.value : opt.textContent))}<span class="label">${opt.textContent}</span>`;
     if (!isDisabled) {
       item.addEventListener('click', () => selectValue(opt.hasAttribute('value') ? opt.value : opt.textContent));
     }
@@ -452,7 +612,7 @@ function enhanceSelect(selectEl, iconMap) {
     const evt = new Event('change', { bubbles: true });
     selectEl.dispatchEvent(evt);
     // Update visuals
-    valueSpan.innerHTML = `${iconFor(selectEl, iconMap, getSelectedLabel())}<span class="label">${getSelectedLabel()}</span>`;
+    valueSpan.innerHTML = `${iconFor(selectEl, iconMap, value)}<span class="label">${getSelectedLabel()}</span>`;
     list.querySelectorAll('.dropdown-item').forEach(li => li.setAttribute('aria-selected', String(li.getAttribute('data-value') === value)));
     close();
     button.focus();
@@ -511,6 +671,34 @@ function iconFor(selectEl, map, label) {
 // Enhance on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   enhanceSelect(industryEl, industryIcons);
+  enhanceSelect(targetEl, targetIcons);
   enhanceSelect(typeEl, typeIcons);
+  // Initialize twist row visibility based on toggle default
+  if (twistRow && twistToggleEl) {
+    twistRow.style.display = twistToggleEl.checked ? '' : 'none';
+  }
+  // Reflect changes immediately if user toggles after generation
+  if (twistToggleEl) {
+    twistToggleEl.addEventListener('change', () => {
+      if (twistRow) {
+        const includeTwist = !!twistToggleEl.checked;
+        if (!resultSection.classList.contains('hidden')) {
+          if (includeTwist) {
+            // generate twist deterministically for the current seed
+            const seedBasis = lastSeedBasis;
+            const eff = variantCounter ? `${seedBasis}|v${variantCounter}` : seedBasis;
+            twistText.textContent = generateTwist(eff || lastEffectiveSeed || `${industryEl.value}|${typeEl.value}`);
+            twistRow.style.display = '';
+          } else {
+            twistText.textContent = '';
+            twistRow.style.display = 'none';
+          }
+        } else {
+          // No result yet; just set visibility
+          twistRow.style.display = includeTwist ? '' : 'none';
+        }
+      }
+    });
+  }
 });
 
