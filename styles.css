@@ -214,8 +214,8 @@ select:focus-visible {
   height: 18px;
   display: inline-block;
   background-color: currentColor; /* color inherits from .twist-row */
-  -webkit-mask: url('https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/sparkles.svg') no-repeat center / contain;
-  mask: url('https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/sparkles.svg') no-repeat center / contain;
+  -webkit-mask: url('https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/solid/sparkles.svg') no-repeat center / contain;
+  mask: url('https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/solid/sparkles.svg') no-repeat center / contain;
 }
 
 .actions {
@@ -258,7 +258,6 @@ select:focus-visible {
 /* About page */
 .about {
   display: grid;
-  gap: 16px;
 }
 
 .about-profile {
@@ -266,8 +265,14 @@ select:focus-visible {
   flex-direction: column; /* stack vertically */
   align-items: flex-start;
   text-align: left;
-  gap: 12px;
+  gap: 56px;
   margin-top: 36px;
+}
+
+.about h2 {
+  font-size: 36px;
+  font-weight: 500;
+  margin: 0 0 6px; /* space betwwen h2 and p*/
 }
 
 .avatar {
@@ -406,5 +411,18 @@ select:focus-visible {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Twist toggle styles */
+#twist-toggle {
+  accent-color: var(--accent);
+}
+
+label[for="twist-toggle"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-top: 8px; /* space from previous field */
 }
 
