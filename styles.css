@@ -80,7 +80,7 @@ body {
 .container {
   max-width: 640px;
   margin: var(--header-h) auto 0; /* below fixed header */
-  padding: 0 24px;
+  padding: 0 24px 16px;
   height: calc(100vh - var(--header-h) - var(--footer-h));
   overflow: auto; /* restore internal scroll if needed */
 }
@@ -245,6 +245,13 @@ select:focus-visible {
 .ghost:active { transform: translateY(0); }
 .ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
+/* General icon styles */
+.icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
+
 .copy-icon { width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px; }
 .again-icon { width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px; }
 
@@ -261,6 +268,7 @@ select:focus-visible {
   color: var(--muted);
   padding: 0 16px;
   font-size: 13px;
+  z-index: 50;
 }
 
 /* About page */
@@ -306,6 +314,12 @@ select:focus-visible {
 @media (max-width: 420px) {
   .brief { font-size: 16px; }
   .actions { flex-direction: column; }
+  .container {
+    padding: 0 16px;
+  }
+  .site-header .inner {
+    padding: 0 16px;
+  }
 }
 
 @media (min-width: 560px) {
@@ -334,6 +348,19 @@ select:focus-visible {
   }
   .ghost { background: rgba(255,255,255,0.06); }
   .ghost:hover { background: rgba(255,255,255,0.09); }
+  
+  /* Make icons white in dark mode */
+  .icon,
+  .brand-icon,
+  .copy-icon,
+  .again-icon,
+  .chevron {
+    filter: brightness(0) invert(1);
+  }
+  
+  /* Dropdown dark mode adjustments */
+  .dropdown-item[aria-selected="true"] { background: rgba(255,255,255,0.06); }
+  .dropdown-item:hover { background: rgba(255,255,255,0.05); }
 }
 
 /* micro-interaction for missing required field */
@@ -393,7 +420,7 @@ select:focus-visible {
 
 .dropdown-list {
   position: absolute;
-  z-index: 10;
+  z-index: 1000;
   left: 0;
   right: 0;
   margin-top: 8px;
