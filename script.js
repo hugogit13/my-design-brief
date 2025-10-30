@@ -134,6 +134,26 @@ function seededPick(array, rnd) {
   return array[Math.floor(rnd() * array.length)];
 }
 
+// Choose a or an based on basic vowel rule for the composed noun phrase
+function articleFor(phrase) {
+  const s = String(phrase || '').trim().toLowerCase();
+  if (!s) return 'a';
+  const startsWithVowel = /^[aeiou]/.test(s);
+  return startsWithVowel ? 'an' : 'a';
+}
+
+// Deterministically pick N distinct items
+function seededPickDistinct(array, n, rnd) {
+  if (!Array.isArray(array) || array.length === 0) return [];
+  const indices = array.map((_, i) => i);
+  // simple deterministic shuffle using rnd
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  return indices.slice(0, Math.max(0, Math.min(n, array.length))).map(i => array[i]);
+}
+
 // Tracks current parameter seed and a variant counter for "Generate another"
 let lastSeedBasis = '';
 let variantCounter = 0;
@@ -397,13 +417,38 @@ function generateBrief({ industry, type, target, seedOverride }) {
     : (useCasesByIndustry[industry] || []);
   const useCase = seededPick(candidateUseCases.length ? candidateUseCases : ['deliver clear user value fast'], rnd);
 
-  // E.g., "Create some UI for a cycling travel application. The main use case is as follows: book trips in less than 5 clicks."
+  // Compose deliverable wording by type
+  const deliverableByType = {
+    'complete application': 'a complete application',
+    'some UI': 'a set of polished UI screens',
+    'prototype': 'an interactive prototype',
+    'wireframes': 'high-level wireframes',
+    'user flows': 'clear user flows'
+  };
+  const deliverable = deliverableByType[typePhrase] || 'a product experience';
+
+  // Action/Object for topic coherence
+  const actionObj = topicActions[topic] || { action: 'help users', object: topic };
+
+  // Supporting product principles
+  const principles = [
+    'fast first-time success',
+    'clear navigation',
+    'gentle, self-explanatory onboarding',
+    'accessible interactions (WCAG AA+)',
+    'snappy performance under real-world conditions'
+  ];
+  const pickedPrinciples = seededPickDistinct(principles, 2, rnd);
+
+  // Sentences
   const modifierPrefix = modifier ? `${modifier} ` : '';
-  const audienceSuffix = target ? ` for ${target}` : '';
-  const first = `Create ${typePhrase} for a ${modifierPrefix}${app}${audienceSuffix}.`;
-  const second = `The main use case is as follows: ${useCase}.`;
+  const subjectNoun = `${modifierPrefix}${app}`;
+  const aud = target ? ` for ${target}` : '';
+  const first = `Design ${deliverable} for ${articleFor(subjectNoun)} ${subjectNoun}${aud}.`;
+  const second = `Focus on enabling users to ${actionObj.action} ${actionObj.object}; specifically, ${useCase}.`;
+  const third = pickedPrinciples.length ? `Prioritize ${pickedPrinciples.join(' and ')}.` : '';
   const style = generationStyle[target] ? ` ${generationStyle[target]}` : '';
-  return `${first} ${second}${style}`;
+  return [first, second, third].filter(Boolean).join(' ') + style;
 }
 
 function generateTwist(seedBasis) {
@@ -450,6 +495,17 @@ function handleGenerate(variant = false) {
   const effectiveSeed = variantCounter ? `${basis}|v${variantCounter}` : basis;
   lastEffectiveSeed = effectiveSeed;
 
+  // Persist state in URL for shareability and consistency
+  try {
+    const params = new URLSearchParams(window.location.search);
+    params.set('industry', industry);
+    params.set('type', type);
+    params.set('target', target);
+    params.set('v', String(variantCounter || 0));
+    params.set('twist', includeTwist ? '1' : '0');
+    history.replaceState(null, '', `${location.pathname}?${params.toString()}`);
+  } catch {}
+
   setTimeout(() => {
     const brief = generateBrief({ industry, type, target, seedOverride: effectiveSeed });
     const twist = includeTwist ? generateTwist(effectiveSeed) : '';
@@ -463,8 +519,13 @@ function handleGenerate(variant = false) {
       }
     }
     resultSection.classList.remove('hidden');
+    // Move focus to result for speed and a11y
+    try {
+      resultSection.setAttribute('tabindex', '-1');
+      resultSection.focus({ preventScroll: false });
+    } catch {}
     setLoading(false);
-  }, 420);
+  }, 160);
 }
 
 function handleCopy() {
@@ -492,6 +553,22 @@ function handleCopy() {
 generateBtn.addEventListener('click', () => handleGenerate(false));
 againBtn.addEventListener('click', () => handleGenerate(true));
 copyBtn.addEventListener('click', handleCopy);
+
+// Keyboard shortcuts for speed
+document.addEventListener('keydown', (e) => {
+  const key = e.key.toLowerCase();
+  if ((e.metaKey || e.ctrlKey) && key === 'enter') {
+    e.preventDefault();
+    handleGenerate(false);
+  } else if (key === 'g') {
+    // Generate another
+    handleGenerate(true);
+  } else if (key === 'c') {
+    handleCopy();
+  } else if (key === 't' && twistToggleEl) {
+    twistToggleEl.click();
+  }
+});
 
 
 // ----------------------------------------------
@@ -677,6 +754,46 @@ document.addEventListener('DOMContentLoaded', () => {
   if (twistRow && twistToggleEl) {
     twistRow.style.display = twistToggleEl.checked ? '' : 'none';
   }
+  // Restore state from URL if present
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const pIndustry = params.get('industry');
+    const pType = params.get('type');
+    const pTarget = params.get('target');
+    const pV = parseInt(params.get('v') || '0', 10);
+    const pTwist = params.get('twist');
+
+    if (pIndustry && industryEl) industryEl.value = pIndustry;
+    if (pType && typeEl) typeEl.value = pType;
+    if (pTarget && targetEl) targetEl.value = pTarget;
+    if (typeof pV === 'number' && !Number.isNaN(pV)) variantCounter = Math.max(0, pV);
+    if (twistToggleEl && (pTwist === '0' || pTwist === '1')) {
+      twistToggleEl.checked = pTwist === '1';
+      if (twistRow) twistRow.style.display = twistToggleEl.checked ? '' : 'none';
+    }
+
+    // Update enhanced dropdown button labels after setting values
+    ['industry', 'type', 'target'].forEach((id) => {
+      const sel = document.getElementById(id);
+      const btn = document.getElementById(`${id}-button`);
+      if (sel && btn) {
+        const valueSpan = btn.querySelector('.value');
+        if (valueSpan) {
+          const map = id === 'industry' ? industryIcons : (id === 'target' ? targetIcons : typeIcons);
+          valueSpan.innerHTML = `${iconFor(sel, map, sel.value)}<span class="label">${sel.selectedOptions[0]?.textContent || ''}</span>`;
+        }
+      }
+    });
+
+    if (pIndustry && pType && pTarget) {
+      lastSeedBasis = `${industryEl.value}|${typeEl.value}|${targetEl.value}`;
+      if (variantCounter > 0) {
+        lastEffectiveSeed = `${lastSeedBasis}|v${variantCounter}`;
+      } else {
+        lastEffectiveSeed = lastSeedBasis;
+      }
+    }
+  } catch {}
   // Reflect changes immediately if user toggles after generation
   if (twistToggleEl) {
     twistToggleEl.addEventListener('change', () => {
