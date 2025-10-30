@@ -26,10 +26,12 @@
     </header>
     <main class="container">
       <header class="hero">
-        <h1>Generate your next design brief.</h1>
+        <h1>Design Brief Generator</h1>
+        <p class="subtitle">Realistic product design briefs. Free, fast, and minimalist.</p>
       </header>
 
-      <section class="controls" aria-labelledby="controls-heading">
+      <section class="main-grid">
+        <section class="controls" aria-labelledby="controls-heading">
         <h2 id="controls-heading" class="sr-only">Brief options</h2>
         <div class="field">
           <label for="industry">Industry</label>
@@ -77,27 +79,28 @@
         <div id="twist-help" class="sr-only">If enabled, a design twist will be added to the brief.</div>
 
         <button id="generate" class="cta" aria-live="polite">Generate Brief</button>
-      </section>
+        </section>
 
-      <section id="result" class="result hidden" aria-live="polite" aria-atomic="true">
-        <div class="card">
-          <h3 class="card-title">Your brief</h3>
-          <p id="brief-text" class="brief"></p>
-          <div class="twist-row">
-            <span class="icon twist-icon" aria-hidden="true"></span>
-            <p id="twist-text" class="twist"></p>
+        <section id="result" class="result hidden" aria-live="polite" aria-atomic="true">
+          <div class="card">
+            <h3 class="card-title">Your brief</h3>
+            <p id="brief-text" class="brief"></p>
+            <div class="twist-row">
+              <span class="icon twist-icon" aria-hidden="true"></span>
+              <p id="twist-text" class="twist"></p>
+            </div>
+            <div class="actions">
+              <button id="again" class="ghost">
+                <img class="icon again-icon" aria-hidden="true" alt="" src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/arrow-path.svg" />
+                Generate another
+              </button>
+              <button id="copy" class="ghost" aria-label="Copy brief to clipboard">
+                <img class="icon copy-icon" aria-hidden="true" alt="" src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/clipboard-document.svg" />
+                <span class="label-text">Copy brief</span>
+              </button>
+            </div>
           </div>
-          <div class="actions">
-            <button id="again" class="ghost">
-              <img class="icon again-icon" aria-hidden="true" alt="" src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/arrow-path.svg" />
-              Generate another
-            </button>
-            <button id="copy" class="ghost" aria-label="Copy brief to clipboard">
-              <img class="icon copy-icon" aria-hidden="true" alt="" src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/clipboard-document.svg" />
-              <span class="label-text">Copy brief</span>
-            </button>
-          </div>
-        </div>
+        </section>
       </section>
 
       <footer class="footnote" aria-label="About">
