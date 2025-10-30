@@ -82,7 +82,7 @@ body {
   margin: var(--header-h) auto 0; /* below fixed header */
   padding: 0 24px;
   height: calc(100vh - var(--header-h) - var(--footer-h));
-  overflow: auto; /* allow content to scroll internally if needed */
+  overflow: auto; /* restore internal scroll if needed */
 }
 
 .hero {
@@ -106,10 +106,12 @@ h1, h2, h3, .card-title {
   color: var(--subtle);
 }
 
+.main-grid { display: block; }
+
 .controls {
   display: grid;
-  gap: 16px;
-  margin: 32px auto 28px;
+  gap: 14px;
+  margin: 16px 0 32px;
 }
 
 .field label {
@@ -167,11 +169,12 @@ select:focus-visible {
 .result.hidden { display: none; }
 
 .card {
-  margin-top: 24px;
+  margin-top: 8px;
   background: var(--card);
   border-radius: 16px;
   padding: 22px 20px;
   box-shadow: var(--shadow);
+  animation: rise-in 220ms ease-out;
 }
 
 .card-title {
@@ -222,6 +225,11 @@ select:focus-visible {
   display: flex;
   gap: 8px;
   margin-top: 16px;
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .ghost {
@@ -298,6 +306,34 @@ select:focus-visible {
 @media (max-width: 420px) {
   .brief { font-size: 16px; }
   .actions { flex-direction: column; }
+}
+
+@media (min-width: 560px) {
+  /* First two fields inline; rest full width */
+  .controls { grid-template-columns: 1fr 1fr; }
+  .controls .field:nth-of-type(3) { grid-column: 1 / -1; }
+  label[for="twist-toggle"],
+  .cta { grid-column: 1 / -1; }
+}
+
+/* Dark mode (keeps minimalist look) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --text: #e8e8ea;
+    --subtle: #a0a3ad;
+    --muted: #8a8f9b;
+    --card: #151922;
+    --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    --twist-bg: #101921;
+    --twist-fg: #bde7ac;
+    --accent: #79c466;
+  }
+  body {
+    background: radial-gradient(900px 600px at 50% -10%, #0c0e13 0%, var(--bg) 60%);
+  }
+  .ghost { background: rgba(255,255,255,0.06); }
+  .ghost:hover { background: rgba(255,255,255,0.09); }
 }
 
 /* micro-interaction for missing required field */
